@@ -1,0 +1,10 @@
+body {
+    background: #1bcbe2;
+    color: white;
+}
+
+/* Cursor personalizado */
+canvas {
+    border: 3px solid white;
+    cursor: url('../assets/img/mira.png'), crosshair;
+}
