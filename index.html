@@ -33,17 +33,23 @@
         Haz clic en los virus antes de que escapen 😈
     </p>
 
-    <!-- PANTALLA INICIO -->
+    <!-- INICIO -->
     <div id="menuInicio" class="overlay">
         <h2>🎮 Cazador de Intrusos</h2>
         <button onclick="iniciarJuego()">Iniciar Juego</button>
     </div>
 
-    
+    <!-- GAME OVER -->
+    <div id="gameOver" class="overlay" style="display:none;">
+        <h2>💀 Game Over</h2>
+        <p>Puntuación: <span id="finalScore"></span></p>
+        <button onclick="reiniciarJuego()">Reintentar</button>
+    </div>
+
 </div>
 
 <footer class="bg-dark text-white text-center p-2 mt-3">
-    Desarrollado por: Tu Nombre
+    Desarrollado por: Maria Fernanda Gama Barrón
 </footer>
 
 <script src="assets/js/game.js"></script>

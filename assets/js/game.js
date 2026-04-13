@@ -8,6 +8,8 @@ let velocidad = 2;
 let enemigos = [];
 let explosiones = [];
 
+let spawnRate = 0.01;
+
 let highScore = localStorage.getItem("highScore") || 0;
 document.getElementById("highScore").textContent = highScore;
 
@@ -51,21 +53,18 @@ function dibujar() {
         e.y += e.speed;
         ctx.drawImage(virus, e.x, e.y, e.size, e.size);
 
-        // SI ESCAPA
         if (e.y > canvas.height) {
             enemigos.splice(i, 1);
             vidas--;
             document.getElementById("vidas").textContent = vidas;
 
             if (vidas <= 0) {
-                vidas = 3;
-                score = Math.max(0, score - 5);
-                document.getElementById("score").textContent = score;
+                terminarJuego();
             }
         }
     });
 
-    // EXPLOSIONES 💥
+    // EXPLOSIONES
     explosiones.forEach((ex, i) => {
         ctx.globalAlpha = ex.alpha;
         ctx.drawImage(explosionImg, ex.x - 25, ex.y - 25, ex.size, ex.size);
@@ -89,8 +88,6 @@ canvas.addEventListener("click", function (e) {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    let hit = false;
-
     enemigos.forEach((enemy, index) => {
         if (
             mouseX > enemy.x &&
@@ -100,13 +97,13 @@ canvas.addEventListener("click", function (e) {
         ) {
             enemigos.splice(index, 1);
             score++;
-            hit = true;
 
             document.getElementById("score").textContent = score;
 
-            // DIFICULTAD
+            // AUMENTA DIFICULTAD
             if (score % 5 === 0) {
                 velocidad += 0.5;
+                spawnRate += 0.005;
             }
 
             // HIGHSCORE
@@ -115,11 +112,10 @@ canvas.addEventListener("click", function (e) {
                 localStorage.setItem("highScore", score);
                 document.getElementById("highScore").textContent = score;
             }
+
+            crearExplosion(mouseX, mouseY);
         }
     });
-
-    // CREAR EXPLOSIÓN SIEMPRE (le da estilo 😎)
-    crearExplosion(mouseX, mouseY);
 });
 
 // INICIAR
@@ -128,13 +124,37 @@ function iniciarJuego() {
     document.getElementById("menuInicio").style.display = "none";
 }
 
+// GAME OVER
+function terminarJuego() {
+    estado = "gameover";
+    document.getElementById("finalScore").textContent = score;
+    document.getElementById("gameOver").style.display = "flex";
+}
+
+// REINICIAR
+function reiniciarJuego() {
+    enemigos = [];
+    explosiones = [];
+    score = 0;
+    vidas = 3;
+    velocidad = 2;
+    spawnRate = 0.01;
+
+    document.getElementById("score").textContent = score;
+    document.getElementById("vidas").textContent = vidas;
+
+    document.getElementById("gameOver").style.display = "none";
+
+    estado = "playing";
+}
+
 // LOOP
 function loop() {
 
     if (estado === "playing") {
         dibujar();
 
-        if (Math.random() < 0.02) {
+        if (Math.random() < spawnRate) {
             crearEnemigo();
         }
     }
